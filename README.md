@@ -46,6 +46,7 @@ Open in browser:http://localhost:5173 (Vite default).
    ```js
    console.log(process.env.REACT_APP_AWS_REGION)
     // should print: us-east-2
+    ```
 
 2. Add a new TODO → appears on the page and in DynamoDB table.
 
@@ -57,5 +58,7 @@ App/Console screenshot:
 ![Todo App](docs/AWS-To_DoApp.png)
 
 ## Sumbission
-- Repo URL: [https://github.com/ellene.broome/aws-dynamodb-todo](https://github.com/ellene.broome/aws-dynamodb-todo)
+- Repo URL: [https://github.com/ellene.broome/aws-dynamodb-todo](https://ellene-broome.github.io/aws-dynamodb-todo/
+Filter deployments
+)
  

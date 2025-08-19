@@ -1,6 +1,7 @@
 /* index.css Global styling and applies to the whole app */
 /* Imported once into main.jsx */
 
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
