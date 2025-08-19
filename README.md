@@ -58,7 +58,7 @@ App/Console screenshot:
 ![Todo App](docs/AWS-To_DoApp.png)
 
 ## Sumbission
-- Repo URL: [https://github.com/ellene.broome/aws-dynamodb-todo](https://ellene-broome.github.io/aws-dynamodb-todo/
-Filter deployments
-)
- 
+## Submission
+
+- **Repo URL:** [https://github.com/ellene-broome/aws-dynamodb-todo](https://github.com/ellene-broome/aws-dynamodb-todo)  
+- **Live App (GitHub Pages):** [https://ellene-broome.github.io/aws-dynamodb-todo/](https://ellene-broome.github.io/aws-dynamodb-todo/)

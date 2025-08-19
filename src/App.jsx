@@ -52,9 +52,9 @@ function App() {
       onChange={changeHandlerText}
       placeholder="Enter a todo"
     />
-
+    {/* Button to create a new todo */}
     <button onClick={createHandler}>Send Data</button>
-
+    {/* List the todos */}
     <ul>
       {todos.map((t) => (
         <li key={t.id}>{t.Text}</li>
