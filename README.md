@@ -57,8 +57,19 @@ Open in browser:http://localhost:5173 (Vite default).
 App/Console screenshot:
 ![Todo App](docs/AWS-To_DoApp.png)
 
-## Sumbission
+## Day 4 - Undate and Delete
+### Features Implemented
+- **Create Todos**: Add new items with text input.
+- **Read Todos**: Fetch and display all todos from DynamoDB.
+- **Update Todos**: Toggle `IsComplete` on/off using a checkbox.
+- **Delete Todos**: Remove todos with a delete button (`×`).
+
+### UI Features
+- Textbox + button to create new todos.  
+- List of todos with:
+  - Checkbox to toggle completion (`line-through` effect).  
+  - Delete button to remove item.  
+
 ## Submission
 
 - **Repo URL:** [https://github.com/ellene-broome/aws-dynamodb-todo](https://github.com/ellene-broome/aws-dynamodb-todo)  
-- **Live App (GitHub Pages):** [https://ellene-broome.github.io/aws-dynamodb-todo/](https://ellene-broome.github.io/aws-dynamodb-todo/)
