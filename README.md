@@ -62,7 +62,7 @@ App/Console screenshot:
 - **Create Todos**: Add new items with text input.
 - **Read Todos**: Fetch and display all todos from DynamoDB.
 - **Update Todos**: Toggle `IsComplete` on/off using a checkbox.
-- **Delete Todos**: Remove todos with a delete button (`×`).
+- **Delete Todos**: Remove todos with a delete button (`Delete`).
 
 ### UI Features
 - Textbox + button to create new todos.  
