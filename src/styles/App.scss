@@ -9,52 +9,62 @@ $accent: #e9c46a;
 $muted: #f4a261;
 $highlight: #e76f51;
 
-// Center the app container
+// -------- Layout shell --------
 .app-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; // less centering so long lists can grow
   min-height: 100vh;
   background-color: $primary;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
     'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    
 
-  /* Add a max-width so it doesn’t stretch */
-  max-width: 600px;
-  margin: 5rem auto;
-  padding: 15rem;
+  max-width: 800px;          // a bit wider for comfort
+  margin: 3rem auto;
+  padding: 2rem;             // was 15rem — too huge
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
-// Section One (Header + Input + Button)
+// -------- Section One (Header + Input + Button) --------
 .section-one {
   width: 100%;
   text-align: center;
-  margin-bottom: 1rem;
+  margin: 1rem; // fixed invalid 'rem' value
+
+  // Lay out the input + button side-by-side on desktop
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; // space between input and button
 
   h2 {
     color: white;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    width: 100%;          // make the heading take the full row
+    text-align: center;
   }
 
-  input {
-    padding: 0.5rem;
-    margin-right: 0.5rem;
+  /* Style MUI TextField's inner input */
+  :where(.MuiOutlinedInput-root) input {
+    padding: 0.5rem !important;
+    background: white;
+    border-radius: 6px;
+  }
+
+  /* Limit TextField width similar to your old 60% */
+  :where(.MuiTextField-root) {
     width: 60%;
-    border: none;
-    border-radius: 6px;
   }
 
-  button {
+  /* Style MUI Button like your old button, but remove huge top margin */
+  :where(.MuiButton-root) {
     background-color: $accent;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 6px;
+    color: #1a1a1a;
     font-weight: bold;
-    cursor: pointer;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
 
     &:hover {
       background-color: color.scale($accent, $lightness: -10%);
@@ -62,7 +72,25 @@ $highlight: #e76f51;
   }
 }
 
-// Section Two (Todos)
+/* Mobile: stack input above button and stretch widths */
+@media (max-width: 600px) {
+  .section-one {
+    flex-direction: column;   // stack vertically
+    align-items: stretch;     // make children full width
+    gap: 0.5rem;
+
+    :where(.MuiTextField-root) {
+      width: 100%;
+    }
+
+    :where(.MuiButton-root) {
+      width: 100%;
+    }
+  }
+}
+
+
+// -------- Section Two (Todos) --------
 .section-two {
   width: 100%;
   background-color: $secondary;
@@ -73,11 +101,13 @@ $highlight: #e76f51;
   p {
     color: $muted;
     font-weight: bold;
+    margin: 0 0 0.5rem;
   }
 
   ul {
     list-style: none;
     padding: 0;
+    margin: 0;
 
     li {
       display: flex;
@@ -85,8 +115,9 @@ $highlight: #e76f51;
       justify-content: space-between;
       background: white;
       margin: 0.5rem 0;
-      padding: 0.5rem;
+      padding: 0.5rem 0.75rem;
       border-radius: 6px;
+      gap: 0.5rem;
 
       input[type="checkbox"] {
         margin-right: 0.5rem;
@@ -97,37 +128,48 @@ $highlight: #e76f51;
         text-align: left;
       }
 
-      button {
-        margin-left: 0.25rem;
-        padding: 0.4rem 0.6rem;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
+      /* Action buttons container (the <div> wrapping IconButtons) */
+      > div {
         display: flex;
         align-items: center;
-        justify-content: center;
+        gap: 0.25rem;
+      }
 
-        &.delete-btn {
-          background: $highlight;
-          color: white;
-        }
-
-        &.edit-btn {
-          background: $muted;
-          color: white;
-        }
+      /* Style MUI IconButtons via your class hooks */
+      .delete-btn {
+        background: $highlight;
+        color: white;
 
         &:hover {
-          opacity: 0.9;
+          background: color.scale($highlight, $lightness: -10%);
+        }
+      }
+
+      .edit-btn {
+        background: $muted;
+        color: white;
+
+        &:hover {
+          background: color.scale($muted, $lightness: -10%);
+        }
+      }
+
+      /* smooth hover feedback on both */
+      .edit-btn,
+      .delete-btn {
+        border-radius: 6px;          // IconButton is circular by default; make it pill-like
+        padding: 0.4rem 0.6rem;
+        transition: transform 0.15s ease, opacity 0.15s ease;
+        &:hover {
           transform: scale(1.05);
-          transition: all 0.2s ease;
+          opacity: 0.95;
         }
       }
     }
   }
 }
 
-// Section Three (Footer)
+// -------- Section Three (Footer) --------
 .section-three {
   width: 100%;
   background-color: $highlight;
@@ -138,5 +180,21 @@ $highlight: #e76f51;
   p {
     color: white;
     font-weight: bold;
+    margin: 0;
+  }
+}
+
+/* Optional: make long lists scroll within the colored panel */
+.section-two {
+  max-height: 60vh;
+  overflow: auto;
+}
+
+/* Optional: responsive tweak for small screens */
+@media (max-width: 600px) {
+  .section-one :where(.MuiTextField-root) {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 0.5rem;
   }
 }

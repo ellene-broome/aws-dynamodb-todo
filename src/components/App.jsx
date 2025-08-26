@@ -1,23 +1,21 @@
 // src/components/App.jsx
+// src/components/App.jsx
 console.log("Region:", import.meta.env.VITE_AWS_REGION);
 
 import React, { useState, useEffect } from "react";
 import {
-  Box,
   Button,
-  Card,
-  CardHeader,
-  CardContent,
-  Stack,
   TextField,
   Typography,
   IconButton,
 } from "@mui/material";
 import { FaTrash, FaEdit } from "react-icons/fa";
 import { scanTodos, createTodo, updateTodo, deleteTodo } from "../utils/dynamo.js";
+
+// 👇 bring in your Sass
 import "../styles/App.scss";
 
-// ---- Helper: make a UI-friendly copy of a DB item ----
+// ---- map DB item -> UI item (all lowercase fields for the UI) ----
 function toUi(item) {
   return {
     id: item.id ?? item.Id ?? `${Date.now()}-${Math.random()}`,
@@ -26,7 +24,7 @@ function toUi(item) {
   };
 }
 
-// ---- Helper: make a DB-friendly copy from UI shape ----
+// ---- map UI item -> DB item (DB expects capitalized fields) ----
 function toDb(ui) {
   return {
     id: ui.id,
@@ -39,133 +37,126 @@ function App() {
   const [text, setText] = useState("");
   const [todos, setTodos] = useState([]);
 
-  // 1) Load todos once, normalize to UI shape
+  // load + normalize
   useEffect(() => {
     const fetchTodos = async () => {
       const data = await scanTodos();
-      console.log("raw todos from DB:", data);
       const normalized = (data ?? []).map(toUi);
       setTodos(normalized);
     };
     fetchTodos();
   }, []);
 
-  // 2) Input change
+  // input change
   const changeHandlerText = (e) => setText(e.target.value);
 
-  // 3) Create a todo
+  // add todo
   const createHandler = async () => {
     if (!text.trim()) return;
 
-    // UI shape first
     const uiItem = {
       id: Date.now().toString(),
       text: text.trim(),
       isComplete: false,
     };
 
-    // Save to DB using DB shape
-    await createTodo(toDb(uiItem));
-
-    // Optimistically add to UI
-    setTodos((prev) => [uiItem, ...prev]);
+    await createTodo(toDb(uiItem));        // save in DB shape
+    setTodos((prev) => [uiItem, ...prev]); // show immediately
     setText("");
   };
 
-  // 4) Toggle complete (separate from delete!)
+  // toggle complete
   const toggleHandler = async (todo) => {
-    const nextState = !todo.isComplete;
-
-    // Update DB (DB shape)
-    const updatedDb = await updateTodo(todo.id, { IsComplete: nextState });
-
-    // Update UI
+    const next = !todo.isComplete;
+    const updatedDb = await updateTodo(todo.id, { IsComplete: next });
     setTodos((prev) =>
       prev.map((t) =>
-        t.id === todo.id ? { ...t, isComplete: updatedDb.IsComplete ?? nextState } : t
+        t.id === todo.id ? { ...t, isComplete: updatedDb.IsComplete ?? next } : t
       )
     );
   };
 
-  // 5) Delete (only deletes)
+  // delete
   const deleteHandler = async (id) => {
     await deleteTodo(id);
     setTodos((prev) => prev.filter((t) => t.id !== id));
   };
 
   return (
-    <Box sx={{ p: 5, display: "flex", justifyContent: "center" }}>
-      <Card sx={{ maxWidth: 480, width: "100%", borderRadius: 2, boxShadow: 6 }}>
-        <CardHeader title={<Typography variant="h6">My To-Do List</Typography>} />
-        <CardContent>
-          <Stack spacing={2}>
-            {/* Input + Add */}
-            <TextField
-              value={text}
-              onChange={changeHandlerText}
-              label="Enter a new task"
-              variant="outlined"
-              fullWidth
-            />
-            <Button variant="contained" color="primary" onClick={createHandler}>
-              Add
-            </Button>
+    <div className="app-container">
+      {/* Section One: Header + Input + Button (Sass controls layout; MUI provides components) */}
+      <div className="section-one">
+        <h2>To_Do App</h2>
 
-            {/* List */}
-            <Stack spacing={1}>
-              {todos.map((todo) => (
-                <Box
-                  key={todo.id}
-                  sx={{
-                    p: 1.5,
-                    border: "1px solid",
-                    borderColor: "divider",
-                    borderRadius: 1,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
+        {/* MUI TextField still renders an <input> inside, so your Sass rules on .section-one input will apply */}
+        <TextField
+          value={text}
+          onChange={changeHandlerText}
+          placeholder="Enter a new task"
+          variant="outlined"
+          size="small"
+          // optional: fullWidth if you prefer MUI sizing over your Sass width:
+          // fullWidth
+        />
+
+        {/* MUI Button; Sass rule .section-one button still applies (it renders a <button>) */}
+        <Button variant="contained" color="primary" onClick={createHandler}>
+          Add
+        </Button>
+      </div>
+
+      {/* Section Two: Todos list (Sass handles ul/li look; we sprinkle MUI for icons) */}
+      <div className="section-two">
+        <p>Your Tasks</p>
+        <ul>
+          {todos.map((todo) => (
+            <li key={todo.id}>
+              {/* Checkbox (plain HTML so your Sass rule input[type="checkbox"] applies) */}
+              <input
+                type="checkbox"
+                checked={todo.isComplete}
+                onChange={() => toggleHandler(todo)}
+              />
+
+              <span style={{
+                textDecoration: todo.isComplete ? "line-through" : "none",
+                opacity: todo.isComplete ? 0.6 : 1,
+              }}>
+                {todo.text}
+              </span>
+
+              <div>
+                {/* MUI IconButtons with your Sass class hooks for colors/hover */}
+                <IconButton
+                  className="edit-btn"
+                  aria-label="toggle complete"
+                  size="small"
+                  onClick={() => toggleHandler(todo)}
+                  title="Toggle complete"
                 >
-                  <Typography
-                    sx={{
-                      textDecoration: todo.isComplete ? "line-through" : "none",
-                      opacity: todo.isComplete ? 0.6 : 1,
-                    }}
-                  >
-                    {todo.text}
-                  </Typography>
+                  <FaEdit />
+                </IconButton>
 
-                  <Box>
-                    {/* Toggle complete */}
-                    <IconButton
-                      size="small"
-                      color="primary"
-                      aria-label="toggle complete"
-                      onClick={() => toggleHandler(todo)}
-                      title="Toggle complete"
-                      sx={{ mr: 1 }}
-                    >
-                      <FaEdit />
-                    </IconButton>
+                <IconButton
+                  className="delete-btn"
+                  aria-label="delete todo"
+                  size="small"
+                  onClick={() => deleteHandler(todo.id)}
+                  title="Delete"
+                >
+                  <FaTrash />
+                </IconButton>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-                    {/* Delete */}
-                    <IconButton
-                      size="small"
-                      color="error"
-                      aria-label="delete todo"
-                      onClick={() => deleteHandler(todo.id)}
-                      title="Delete"
-                    >
-                      <FaTrash />
-                    </IconButton>
-                  </Box>
-                </Box>
-              ))}
-            </Stack>
-          </Stack>
-        </CardContent>
-      </Card>
-    </Box>
+      {/* Section Three: Footer (pure Sass) */}
+      <div className="section-three">
+        <p>Manage your tasks efficiently!</p>
+      </div>
+    </div>
   );
 }
 
