@@ -1,21 +1,34 @@
-# DynamoDB Todo App 
+# DynamoDB Todo App
+
+A React + Vite app that reads/writes items in a DynamoDB table. Uses **AWS SDK v3** for data, **Material-UI (MUI)** for UI components, and **Sass (SCSS)** for layout/responsive styling.
+
 ## Objectives
 - Fetch all TODO items from DynamoDB on component mount.
-- Allow adding a new TODO by writing an item to DynamoDB.
-- Use the AWS SDK for JavaScript v3 (@aws-sdk/client-dynamodb & @aws-sdk/lib-dynamodb).
+- Add new TODO items by writing to DynamoDB.
+- Use AWS SDK for JavaScript v3 (`@aws-sdk/client-dynamodb`, `@aws-sdk/lib-dynamodb`).
+- **Day 3:** Integrate a component library (MUI) and customize via props + Sass.
+- **Day 4:** Implement responsive design for mobile/tablet/desktop.
+
+## Tech Stack
+- React (Vite)
+- AWS SDK v3 (DynamoDB)
+- Material-UI (MUI)
+- Sass (SCSS)
 
 ## Setup & Run
-1. Clone the repo
+
+1) **Clone**
 ```bash
-git clone [aws-dynamobd-todo](https://github.com/ellene-broome/aws-dynamodb-todo.git)
-cd aws-dynamobd-todo
+git clone https://github.com/ellene-broome/aws-dynamodb-todo.git
+cd aws-dynamodb-todo
 ```
+
 2. Install dependendencies
 ```bash
 npm install
 ```
-3. Environmental variables
-   Creat a .env.local file in the project root:
+3. Environment variables (Vite requires VITE_ prefix)
+Create a .env.local at the project root:
 ```ini
     REACT_APP_AWS_REGION=us-east-2
     REACT_APP_AWS_ACCESS_KEY_ID=YOUR_KEY_ID
@@ -29,7 +42,16 @@ npm install
 ```bash
 npm run dev
 ```
+
 Open in browser:http://localhost:5173 (Vite default).
+
+## ScreenShots
+### AWS ScreenShot
+![Alt text](src/assets/images/aws-table.png)
+### LocalHost ScreenShot
+![Alt text](src/assets/images/localHost.png)
+### Mobile ScreenShot
+![Alt text](src/assets/images/localHostMobile.png)
 
 ## AWS Prerequisites
 - DynamoDB Table
@@ -37,38 +59,73 @@ Open in browser:http://localhost:5173 (Vite default).
   - Partision key: id (string)
   - Region: ```us-east-2```
 - IAM Users + Policy
-  - Must allow ```dynamodb:Scan``` and ```dynamodb:PutItem``` on the ```To_Do``` table.
-  - Create access key under Security Credentials → use in ```.env.local```.
+  - Must allow at least:
+    y must allow at least:
+    - dynamodb:Scan
+    - dynamodb:PutItem
+    - dynamodb:UpdateItem
+    - dynamodb:DeleteItem
+- Create an access key and put values in `.env.local`.
 
-## Verification
-1. Confirm env vars load:
-   In the browser console, run:
-   ```js
-   console.log(process.env.REACT_APP_AWS_REGION)
-    // should print: us-east-2
-    ```
+## Features
+## Data (CRUD)
 
-2. Add a new TODO → appears on the page and in DynamoDB table.
+- Create: Add new items with text input. Item format in DB: { id, Text, IsComplete }.
 
-3. DynamoDB table screenshot:
-   ### DynamoDB Table
-![Todo Table](docs/AWS-To_DoTable.png)
+- Read: Auto-scan on mount and display all items.
 
-App/Console screenshot:
-![Todo App](docs/AWS-To_DoApp.png)
+- Update: Toggle IsComplete via checkbox/edit button; UI updates instantly.
 
-## Day 4 - Undate and Delete
-### Features Implemented
-- **Create Todos**: Add new items with text input.
-- **Read Todos**: Fetch and display all todos from DynamoDB.
-- **Update Todos**: Toggle `IsComplete` on/off using a checkbox.
-- **Delete Todos**: Remove todos with a delete button (`Delete`).
+- Delete: Remove an item by id; UI updates instantly.
 
-### UI Features
-- Textbox + button to create new todos.  
-- List of todos with:
-  - Checkbox to toggle completion (`line-through` effect).  
-  - Delete button to remove item.  
+## UI (MUI + Sass)
+
+- Sass: Layout and colors via src/styles/App.scss (.app-container, .section-one, .section-two, .section-three).
+
+- MUI components used: TextField, Button, IconButton (plus Typography optionally).
+
+
+
+## Responsive Design 
+
+### Breakpoints
+
+- Mobile: max-width: 600px
+
+- Tablet (optional): max-width: 1024px
+
+- Desktop: default styles
+
+### What changes on mobile:
+
+- Input and button in Section One stack more neatly:
+  ```scss
+  @media (max-width: 600px) {
+  .section-one :where(.MuiTextField-root) {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+    }
+  }
+  ```
+- `\Section-two uses a scroll area to keep the list usable on small screens:
+  ```scss
+  .section-two {
+  max-height: 60vh;
+  overflow: auto; 
+  }
+## Varification
+- Env vars load (open console and check import.meta.env.VITE_AWS_REGION).
+
+- Scan works: items appear in the list on load.
+
+- Create works: clicking Add writes a new item and shows it immediately.
+
+- Update works: toggle complete updates DB and UI.
+
+- Delete works: removing an item updates DB and UI.
+
+- Responsive: layout adapts at ≤600px (input width, button spacing, scrollable list).
 
 ## Submission
 
